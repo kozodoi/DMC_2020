@@ -1,3 +1,11 @@
+# dependencies for helper functions
+import numpy as np
+import pandas as pd
+from sklearn.preprocessing import LabelEncoder
+from sklearn.feature_extraction.text import TfidfVectorizer, CountVectorizer
+
+
+
 ################################
 #                              
 #    TEST-TIME AUGMENTATION    
@@ -33,7 +41,7 @@ def predict_proba_with_tta(X_test,
     preds = model.predict_proba(X_test, num_iteration = num_iteration)[:, 1] / (n + 1)
 
     # select numeric features
-    num_vars = [var for var in X_test.columns if X_test[var].dtype != "object"]
+    num_vars = [var for var in X_test.columns if X_test[var].dtype != 'object']
 
     # synthetic predictions
     for i in range(num_augmentations):
@@ -51,8 +59,6 @@ def predict_proba_with_tta(X_test,
 
     # return probs
     return preds
-
-
 
 
 
@@ -91,9 +97,7 @@ def label_encoding(df_train, df_valid, df_test):
         df_test[f]  = lbl.transform(list(df_test[f].values))
 
     return df_train, df_valid, df_test
-
-
-
+    
 
 
 ###############################
@@ -102,25 +106,26 @@ def label_encoding(df_train, df_valid, df_test):
 #                             
 ###############################
 
-def count_missings(data):
+def count_missings(df):
     '''
     Counts missing values in a dataframe.
 
     Arguments:
-    - data = pandas DF
+    - df = pandas DF
 
     Returns:
     - table with the missings stats
     '''
 
-    total = data.isnull().sum().sort_values(ascending = False)
-    percent = (data.isnull().sum() / data.isnull().count() * 100).sort_values(ascending = False)
-    table = pd.concat([total, percent], axis = 1, keys = ["Total", "Percent"])
-    table = table[table["Total"] > 0]
+    total = df.isnull().sum().sort_values(ascending = False)
+    percent = (df.isnull().sum() / df.isnull().count()).sort_values(ascending = False)
+    table = pd.concat([total, percent], axis = 1, keys = ['Total', 'Percent'])
+    table = table[table['Total'] > 0]
 
-    return table
-
-
+    if len(table) > 0:
+        return table
+    else:
+        print('- No missing values found.')
 
 
 
@@ -130,7 +135,12 @@ def count_missings(data):
 #                             
 ###############################
 
-def aggregate_data(df, group_var, num_stats = ['mean', 'sum'], factors = None, var_label = None, sd_zeros = False):
+def aggregate_data(df, 
+                   group_var, 
+                   num_stats = ['mean', 'sum'], 
+                   factors = None, 
+                   var_label = None, 
+                   sd_zeros = False):
     '''
     Aggregates the data by a certain categorical feature. Continuous features 
     are aggregated by computing summary statistcs by the grouping feature. 
@@ -149,15 +159,14 @@ def aggregate_data(df, group_var, num_stats = ['mean', 'sum'], factors = None, v
     - aggregated pandas DF
     '''
     
-    
-    ### SEPARATE FEATURES
+    ##### SEPARATE FEATURES
   
     # display info
-    print("- Preparing the dataset...")
+    print('- Preparing the dataset...')
 
     # find factors
     if factors == None:
-        df_factors = [f for f in df.columns if df[f].dtype == "object"]
+        df_factors = [f for f in df.columns if df[f].dtype == 'object']
         factors    = [f for f in df_factors if f != group_var]
     else:
         df_factors = factors
@@ -174,27 +183,27 @@ def aggregate_data(df, group_var, num_stats = ['mean', 'sum'], factors = None, v
     # display info
     num_facs = fac_df.shape[1] - 1
     num_nums = num_df.shape[1] - 1
-    print("- Extracted %.0f factors and %.0f numerics..." % (num_facs, num_nums))
+    print('- Extracted %.0f factors and %.0f numerics...' % (num_facs, num_nums))
     
 
     ##### AGGREGATION
  
     # aggregate numerics
     if (num_nums > 0):
-        print("- Aggregating numeric features...")
+        print('- Aggregating numeric features...')
         num_df = num_df.groupby([group_var]).agg(num_stats)
-        num_df.columns = ["_".join(col).strip() for col in num_df.columns.values]
+        num_df.columns = ['_'.join(col).strip() for col in num_df.columns.values]
         num_df = num_df.sort_index()
 
     # aggregate factors
     if (num_facs > 0):
-        print("- Aggregating factor features...")
+        print('- Aggregating factor features...')
         fac_int_df = fac_df.copy()
         for var in factors:
             fac_int_df[var], _ = pd.factorize(fac_int_df[var])
         fac_int_df[group_var] = fac_df[group_var]
         fac_df = fac_int_df.groupby([group_var]).agg([('count'), ('mode', lambda x: pd.Series.mode(x)[0])])
-        fac_df.columns = ["_".join(col).strip() for col in fac_df.columns.values]
+        fac_df.columns = ['_'.join(col).strip() for col in fac_df.columns.values]
         fac_df = fac_df.sort_index()           
 
 
@@ -217,20 +226,18 @@ def aggregate_data(df, group_var, num_stats = ['mean', 'sum'], factors = None, v
 
     # update labels
     if (var_label != None):
-        agg_df.columns = [var_label + "_" + str(col) for col in agg_df.columns]
+        agg_df.columns = [var_label + '_' + str(col) for col in agg_df.columns]
     
     # impute zeros for SD
     if (sd_zeros == True):
-        stdevs = agg_df.filter(like = "_std").columns
+        stdevs = agg_df.filter(like = '_std').columns
         for var in stdevs:
             agg_df[var].fillna(0, inplace = True)
             
     # dataset
     agg_df = agg_df.reset_index()
-    print("- Final dimensions:", agg_df.shape)
+    print('- Final dimensions:', agg_df.shape)
     return agg_df
-
-
 
 
 
@@ -240,13 +247,13 @@ def aggregate_data(df, group_var, num_stats = ['mean', 'sum'], factors = None, v
 #                             
 ###############################
 
-def add_date_features(df, fldname, drop = True, time = False):
+def add_date_features(df, date_var, drop = True, time = False):
     '''
     Adds date-based features based to the data frame.
 
     Arguments:
     - df = pandas DF
-    - fldname = name of the date feature
+    - date_var = name of the date feature
     - drop = whether to drop the original date feature
     - time = whether to include time-based features
 
@@ -254,75 +261,80 @@ def add_date_features(df, fldname, drop = True, time = False):
     - pandas DF with new features
     '''
     
-    fld = df[fldname]
+    fld = df[date_var]
     fld_dtype = fld.dtype
     
     if isinstance(fld_dtype, pd.core.dtypes.dtypes.DatetimeTZDtype):
         fld_dtype = np.datetime64
 
     if not np.issubdtype(fld_dtype, np.datetime64):
-        df[fldname] = fld = pd.to_datetime(fld, infer_datetime_format=True)
+        df[date_var] = fld = pd.to_datetime(fld, infer_datetime_format=True)
         
-    targ_pre = re.sub('[Dd]ate$', '', fldname)
-    attr = ['Year', 'Month', 'Week', 'Day', 'Dayofweek', 'Dayofyear',
-            'Is_month_end', 'Is_month_start', 'Is_quarter_end', 'Is_quarter_start', 'Is_year_end', 'Is_year_start']
+    targ_pre = re.sub('[Dd]ate$', '', date_var)
+
+    attr = ['Year', 'Month', 'Week', 'Day', 
+            'Dayofweek', 'Dayofyear',
+            'Is_month_end', 'Is_month_start', 
+            'Is_quarter_end', 'Is_quarter_start', 
+            'Is_year_end', 'Is_year_start']
     
-    if time: attr = attr + ['Hour', 'Minute', 'Second']
+    if time: 
+        attr = attr + ['Hour', 'Minute', 'Second']
         
-    for n in attr: df[targ_pre + n] = getattr(fld.dt, n.lower())
+    for n in attr: 
+        df[targ_pre + n] = getattr(fld.dt, n.lower())
+
     df[targ_pre + 'Elapsed'] = fld.astype(np.int64) // 10 ** 9
     
-    if drop: df.drop(fldname, axis = 1, inplace = True)
+    if drop: 
+        df.drop(date_var, axis = 1, inplace = True)
 
     return df
-      
-    
 
 
-    
+
 ###############################
 #                             
 #      ADD TEXT FEATURES      
 #                             
 ###############################
 
-def add_text_features(df, strings, k = 5, keep = True):
+def add_text_features(df, 
+                      string_vars, 
+                      tf_idf_feats = 5, 
+                      common_words = 10,
+                      rare_words = 10,
+                      drop = True):
     '''
     Add basic text-based features including word count, character count and 
     TF-IDF based features to the data frame.
 
     Arguments:
     - df = pandas DF
-    - strings = list of textual features
-    - keep = whether to keep the original textual features
-    - k = number of TF-IDF based features
+    - string_vars = list of textual features
+    - tf_idf_feats = number of TF-IDF based features
+    - common_words = number of the most common words to remove
+    - rare_words = number of the most rare words to remove
+    - drop = whether to drop the original textual features
 
     Returns:
     - pandas DF with new features
     '''
 
     ##### PROCESSING LOOP
-    for var in strings:
+    for var in string_vars:
 
         ### TEXT PREPROCESSING
 
         # replace NaN with empty string
         df[var][pd.isnull(df[var])] = ''
 
-        # remove common words
-        freq = pd.Series(' '.join(df[var]).split()).value_counts()[:10]
-        #freq = list(freq.index)
-        #df[var] = df[var].apply(lambda x: " ".join(x for x in x.split() if x not in freq))
-        #df[var].head()
-
-        # remove rare words
-        freq = pd.Series(' '.join(df[var]).split()).value_counts()[-10:]
-        #freq = list(freq.index)
-        #df[var] = df[var].apply(lambda x: " ".join(x for x in x.split() if x not in freq))
-        #df[var].head()
+        # remove common and rare words
+        freq = pd.Series(' '.join(df[var]).split()).value_counts()[:common_words]
+        freq = pd.Series(' '.join(df[var]).split()).value_counts()[-rare_words:]
 
         # convert to lowercase 
-        df[var] = df[var].apply(lambda x: " ".join(x.lower() for x in x.split())) 
+        df[var] = df[var].apply(lambda x: ' '.join(x.lower() for x in x.split())) 
 
         # remove punctuation
         df[var] = df[var].str.replace('[^\w\s]','')         
@@ -331,7 +343,7 @@ def add_text_features(df, strings, k = 5, keep = True):
         ### COMPUTE BASIC FEATURES
 
         # word count
-        df[var + '_word_count'] = df[var].apply(lambda x: len(str(x).split(" ")))
+        df[var + '_word_count'] = df[var].apply(lambda x: len(str(x).split(' ')))
         df[var + '_word_count'][df[var] == ''] = 0
 
         # character count
@@ -341,7 +353,7 @@ def add_text_features(df, strings, k = 5, keep = True):
         ##### COMPUTE TF-IDF FEATURES
 
         # import vectorizer
-        tfidf  = TfidfVectorizer(max_features = k, 
+        tfidf  = TfidfVectorizer(max_features = tf_idf_feats, 
                                  lowercase    = True, 
                                  norm         = 'l2', 
                                  analyzer     = 'word', 
@@ -358,16 +370,14 @@ def add_text_features(df, strings, k = 5, keep = True):
         ### CORRECTIONS
 
         # remove raw text
-        if keep == False:
+        if drop == True:
             del df[var]
 
         # print dimensions
-        #print(df.shape)
+        print(df.shape)
         
     # return df
     return df
-
-
 
 
 
