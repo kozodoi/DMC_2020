@@ -54,11 +54,12 @@ def predict_proba_with_tta(X_test,
 
 
 
-    
+
+
 ###############################
-#                             #
-#        ENCODE FACTORS       #
-#                             #
+#                             
+#        ENCODE FACTORS       
+#                             
 ###############################
 
 def label_encoding(df_train, df_valid, df_test):
@@ -94,10 +95,11 @@ def label_encoding(df_train, df_valid, df_test):
 
 
 
+
 ###############################
-#                             #
-#        COUNT MISSINGS       #
-#                             #
+#                             
+#        COUNT MISSINGS       
+#                             
 ###############################
 
 def count_missings(data):
@@ -121,15 +123,12 @@ def count_missings(data):
 
 
 
-###############################
-#                             #
-#        AGGRGEATE DATA       #
-#                             #
-###############################
 
-# aggregates numeric data using specified stats
-# aggregates factors using mode and nunique
-# returns df with generated features
+###############################
+#                             
+#        AGGRGEATE DATA       
+#                             
+###############################
 
 def aggregate_data(df, group_var, num_stats = ['mean', 'sum'], factors = None, var_label = None, sd_zeros = False):
     '''
@@ -233,14 +232,13 @@ def aggregate_data(df, group_var, num_stats = ['mean', 'sum'], factors = None, v
 
 
 
-###############################
-#                             #
-#      ADD DATE FEATURES      #
-#                             #
-###############################
 
-# creates a set of date-related features
-# outputs df with generated features
+
+###############################
+#                             
+#      ADD DATE FEATURES      
+#                             
+###############################
 
 def add_date_features(df, fldname, drop = True, time = False):
     '''
@@ -281,22 +279,20 @@ def add_date_features(df, fldname, drop = True, time = False):
     
 
 
+    
 ###############################
-#                             #
-#      ADD TEXT FEATURES      #
-#                             #
+#                             
+#      ADD TEXT FEATURES      
+#                             
 ###############################
 
-# extract basic features from strings
-# appends new features to the data frame
-
-def add_text_features(data, strings, k = 5, keep = True):
+def add_text_features(df, strings, k = 5, keep = True):
     '''
     Add basic text-based features including word count, character count and 
     TF-IDF based features to the data frame.
 
     Arguments:
-    - data = pandas DF
+    - df = pandas DF
     - strings = list of textual features
     - keep = whether to keep the original textual features
     - k = number of TF-IDF based features
@@ -311,35 +307,35 @@ def add_text_features(data, strings, k = 5, keep = True):
         ### TEXT PREPROCESSING
 
         # replace NaN with empty string
-        data[var][pd.isnull(data[var])] = ''
+        df[var][pd.isnull(df[var])] = ''
 
         # remove common words
-        freq = pd.Series(' '.join(data[var]).split()).value_counts()[:10]
+        freq = pd.Series(' '.join(df[var]).split()).value_counts()[:10]
         #freq = list(freq.index)
-        #data[var] = data[var].apply(lambda x: " ".join(x for x in x.split() if x not in freq))
-        #data[var].head()
+        #df[var] = df[var].apply(lambda x: " ".join(x for x in x.split() if x not in freq))
+        #df[var].head()
 
         # remove rare words
-        freq = pd.Series(' '.join(data[var]).split()).value_counts()[-10:]
+        freq = pd.Series(' '.join(df[var]).split()).value_counts()[-10:]
         #freq = list(freq.index)
-        #data[var] = data[var].apply(lambda x: " ".join(x for x in x.split() if x not in freq))
-        #data[var].head()
+        #df[var] = df[var].apply(lambda x: " ".join(x for x in x.split() if x not in freq))
+        #df[var].head()
 
         # convert to lowercase 
-        data[var] = data[var].apply(lambda x: " ".join(x.lower() for x in x.split())) 
+        df[var] = df[var].apply(lambda x: " ".join(x.lower() for x in x.split())) 
 
         # remove punctuation
-        data[var] = data[var].str.replace('[^\w\s]','')         
+        df[var] = df[var].str.replace('[^\w\s]','')         
 
 
         ### COMPUTE BASIC FEATURES
 
         # word count
-        data[var + '_word_count'] = data[var].apply(lambda x: len(str(x).split(" ")))
-        data[var + '_word_count'][data[var] == ''] = 0
+        df[var + '_word_count'] = df[var].apply(lambda x: len(str(x).split(" ")))
+        df[var + '_word_count'][df[var] == ''] = 0
 
         # character count
-        data[var + '_char_count'] = data[var].str.len().fillna(0).astype('int64')
+        df[var + '_char_count'] = df[var].str.len().fillna(0).astype('int64')
 
 
         ##### COMPUTE TF-IDF FEATURES
@@ -353,20 +349,52 @@ def add_text_features(data, strings, k = 5, keep = True):
                                  ngram_range  = (1, 1))
 
         # compute TF-IDF
-        vals = tfidf.fit_transform(data[var])
-        vals = pd.SparseDataFrame(vals)
+        vals = tfidf.fit_transform(df[var])
+        vals = pd.SparsedfFrame(vals)
         vals.columns = [var + '_tfidf_' + str(p) for p in vals.columns]
-        data = pd.concat([data, vals], axis = 1)
+        df = pd.concat([df, vals], axis = 1)
 
 
         ### CORRECTIONS
 
         # remove raw text
         if keep == False:
-            del data[var]
+            del df[var]
 
         # print dimensions
-        #print(data.shape)
+        #print(df.shape)
         
-    # return data
-    return data
+    # return df
+    return df
+
+
+
+
+
+###############################
+#                             
+#        FILL MISSINGS
+#                             
+###############################
+
+def fill_na(df, to_na_cols, to_0_cols, to_true_cols, to_false_cols):
+    '''
+    Replaces NA with specific values.
+    
+    Arguments:
+    - df = pandas DF
+    - to_0_cols = list of features where NA => 0
+    - to_na_cols = list of features where NA => 'unknown'
+    - to_true_cols = list of features where NA => True
+    - to_false_cols = list of features where NA => False
+
+    Returns
+    - pandas DF with treated features
+    '''
+    
+    df[to_na_cols]    = df[to_na_cols].fillna('Unknown')
+    df[to_0_cols]     = df[to_0_cols].fillna(0)
+    df[to_true_cols]  = df[to_true_cols].fillna(True)
+    df[to_false_cols] = df[to_false_cols].fillna(False)
+       
+    return df
