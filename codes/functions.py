@@ -1,28 +1,40 @@
 import pandas as pd
 import numpy as np
 
-# profit function is non-differentiable => it can only be used for evaluation
-# asymmetric MSE can be used as a training loss to approximate profit:
-# - verpredicting demand by one unit decreases profit by 0.6p
-# - underpredicting demand by one unit decreases profit by p
-# - hence, underpredicting is 1 / 0.6 = 1.67 times more costly
 
-# training loss
-def asymmetric_mse_train(y_true, y_pred):
-    underpredict_mult = 1 / 0.6
-    residual = (y_true - y_pred).astype('float')
-    grad = np.where(residual > 0, -2*residual*underpredict_mult, -2*residual)
-    hess = np.where(residual > 0, 2*underpredict_mult, 2.0)
+##### TRAINING LOSS
+def asymmetric_mse(y_true, y_pred):
+    '''
+    Asymmetric MSE objective for Lightgbm regressor.
+    
+    The profit function is non-differentiable => it can only be used for evaluation.
+    The asymmetric MSE can be used as a training loss to approximate profit:
+     - overpredicting demand by one unit decreases profit by 0.6p
+     - underpredicting demand by one unit decreases profit by p
+     - hence, overpredicting is 0.6 times less costly
+     
+    Arguments:
+    - y_true (numpy array or list): ground truth (correct) target values.
+    - y_pred (numpy array or list): estimated target values.
+    
+    Returns:
+    - gradient matrix
+    - hessiam matrix
+    '''
+    
+    # asymmetry parameter
+    fee_mult = 0.6
+    
+    # computations
+    residual = (y_true - y_pred).astype('float')    
+    grad = np.where(residual > 0, -2*residual*fee_mult, -2*residual)
+    hess = np.where(residual > 0,  2*fee_mult, 2.0)
+    
+    # return values
     return grad, hess
 
-# validation loss
-def asymmetric_mse_eval(y_true, y_pred):
-    underpredict_mult = 1 / 0.6
-    residual = (y_true - y_pred).astype('float')
-    loss = np.where(residual > 0, (residual**2)*underpredict_mult, residual**2) 
-    return 'asymmetric_mse', np.mean(loss), False
 
-# profit function
+##### PROFIT FUNCTION
 def profit(y_true, y_pred, price):
     '''
     Computes profit according to DMC 2020 task.
@@ -43,17 +55,15 @@ def profit(y_true, y_pred, price):
 
     '''
 
-    # round preds
-    y_pred_round = np.round(y_pred)
-
-    # remove negative preds
-    y_pred_round[y_pred_round < 0] = 0
+    # remove negative and round
+    y_pred = np.where(y_pred > 0, y_pred, 0)
+    y_pred = np.round(y_pred).astype('int')
 
     # sold units
-    units_sold = np.minimum(y_true, y_pred_round)
+    units_sold = np.minimum(y_true, y_pred)
 
     # overstocked units
-    units_overstock = y_pred_round - y_true
+    units_overstock = y_pred - y_true
     units_overstock[units_overstock < 0] = 0
 
     # profit
@@ -64,3 +74,29 @@ def profit(y_true, y_pred, price):
     
     # return values
     return profit
+
+
+##### POSTPROCESSING PREDICTIONS
+def postprocess_preds(y_pred):
+    '''
+    Processess demand predictions outputted by a model.
+    
+    Arguments:
+    - y_pred (numpy array or list): estimated target values.
+
+    Returns:
+    - corrected y_pred
+    
+    Examples:
+    
+    postprocess_preds(y_pred = np.array([-2.10, 1.15, 10.78]))
+    '''
+
+    # demand can not be negative
+    y_pred = np.where(y_pred > 0, y_pred, 0)
+    
+    # demand has to be integer
+    y_pred = np.round(y_pred).astype('int')
+
+    # return values
+    return y_pred
