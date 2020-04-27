@@ -5,7 +5,7 @@ import numpy as np
 ##### TRAINING LOSS
 def asymmetric_mse(y_true, y_pred):
     '''
-    Asymmetric MSE objective for Lightgbm regressor.
+    Asymmetric MSE objective for training Lightgbm regressor.
     
     The profit function is non-differentiable => it can only be used for evaluation.
     The asymmetric MSE can be used as a training loss to approximate profit:
