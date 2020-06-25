@@ -19,7 +19,7 @@ def asymmetric_mse(y_true, y_pred):
     
     Returns:
     - gradient matrix
-    - hessiam matrix
+    - hessian matrix
     '''
     
     # asymmetry parameter
@@ -32,6 +32,7 @@ def asymmetric_mse(y_true, y_pred):
     
     # return values
     return grad, hess
+
 
 
 ##### PROFIT FUNCTION
@@ -74,6 +75,7 @@ def profit(y_true, y_pred, price):
     
     # return values
     return profit
+
 
 
 ##### POSTPROCESSING PREDICTIONS
