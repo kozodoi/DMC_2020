@@ -35,6 +35,37 @@ def asymmetric_mse(y_true, y_pred):
 
 
 
+##### VALIDATION LOSS
+def asymmetric_mse_eval(y_true, y_pred):
+    
+    '''
+    Asymmetric MSE evaluation metric for Lightgbm regressor.
+    
+    The asymmetric MSE can be used as a validation loss to approximate profit:
+     - overpredicting demand by one unit decreases profit by 0.6p
+     - underpredicting demand by one unit decreases profit by p
+     - hence, overpredicting is 0.6 times less costly
+     
+    Arguments:
+    - y_true (numpy array or list): ground truth (correct) target values.
+    - y_pred (numpy array or list): estimated target values.
+    
+    Returns:
+    - name of the metric
+    - value od the metric
+    - whether the metric is maximized
+    '''
+    
+    # asymmetry parameter
+    fee_mult = 0.6
+    
+    # computations
+    residual = (y_true - y_pred).astype('float')      
+    loss = np.where(residual > 0, (residual**2)*fee_mult, residual**2) 
+    return 'asymmetric_mse_eval', np.mean(loss), False
+
+
+
 ##### PROFIT FUNCTION
 def profit(y_true, y_pred, price):
     '''
