@@ -1,6 +1,6 @@
 # Data Mining Cup 2020
 
-Files and codes with HU Team solution to the [Data Mining Cup 2020 competition](https://www.data-mining-cup.com). A detailed walkthrough of our solution is provided  in [this blogpost](https://kozodoi.me/python/time%20series/demand%20forecasting/competitions/2020/07/23/demand-forecasting.html). 
+Files and codes with HU Team solution to the [Data Mining Cup 2020 competition](https://www.data-mining-cup.com). A detailed walkthrough of our solution is provided  in [this blogpost](https://kozodoi.me/python/time%20series/demand%20forecasting/competitions/2020/07/27/demand-forecasting.html). 
 
 
 ## Project summary
