@@ -5,13 +5,7 @@ import numpy as np
 ##### TRAINING LOSS
 def asymmetric_mse(y_true, y_pred):
     '''
-    Asymmetric MSE objective for training Lightgbm regressor.
-    
-    The profit function is non-differentiable => it can only be used for evaluation.
-    The asymmetric MSE can be used as a training loss to approximate profit:
-     - overpredicting demand by one unit decreases profit by 0.6p
-     - underpredicting demand by one unit decreases profit by p
-     - hence, overpredicting is 0.6 times less costly
+    Asymmetric MSE objective for training LightGBM regressor.
      
     Arguments:
     - y_true (numpy array or list): ground truth (correct) target values.
@@ -22,15 +16,10 @@ def asymmetric_mse(y_true, y_pred):
     - hessian matrix
     '''
     
-    # asymmetry parameter
-    fee_mult = 0.6
-    
-    # computations
     residual = (y_true - y_pred).astype('float')    
-    grad = np.where(residual > 0, -2*residual*fee_mult, -2*residual)
-    hess = np.where(residual > 0,  2*fee_mult, 2.0)
+    grad     = np.where(residual > 0, -2*residual, -0.72*residual)
+    hess     = np.where(residual > 0,  2.0, 0.72)
     
-    # return values
     return grad, hess
 
 
@@ -39,12 +28,7 @@ def asymmetric_mse(y_true, y_pred):
 def asymmetric_mse_eval(y_true, y_pred):
     
     '''
-    Asymmetric MSE evaluation metric for Lightgbm regressor.
-    
-    The asymmetric MSE can be used as a validation loss to approximate profit:
-     - overpredicting demand by one unit decreases profit by 0.6p
-     - underpredicting demand by one unit decreases profit by p
-     - hence, overpredicting is 0.6 times less costly
+    Asymmetric MSE evaluation metric for LightGBM regressor.
      
     Arguments:
     - y_true (numpy array or list): ground truth (correct) target values.
@@ -56,12 +40,9 @@ def asymmetric_mse_eval(y_true, y_pred):
     - whether the metric is maximized
     '''
     
-    # asymmetry parameter
-    fee_mult = 0.6
-    
-    # computations
     residual = (y_true - y_pred).astype('float')      
-    loss = np.where(residual > 0, (residual**2)*fee_mult, residual**2) 
+    loss     = np.where(residual > 0, 2*residual**2, 0.72*residual**2)
+    
     return 'asymmetric_mse_eval', np.mean(loss), False
 
 
