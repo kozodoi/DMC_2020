@@ -2,3 +2,4 @@
 *.Rhistory*
 *.ipynb_checkpoints*
 *__pycache__*
+data/prepared/df_v14.csv
