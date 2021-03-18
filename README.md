@@ -1,11 +1,14 @@
-# Data Mining Cup 2020
+# Data Mining Cup 2020 Solution
 
-Files and codes with HU Team solution to the [Data Mining Cup 2020 competition](https://www.data-mining-cup.com). A detailed walkthrough of our solution is provided  in [this blogpost](https://kozodoi.me/python/time%20series/demand%20forecasting/competitions/2020/07/27/demand-forecasting.html).
+Solution to the [Data Mining Cup 2020](https://www.data-mining-cup.com) competition on profit-driven demand forectasting. 
+![pipeline](https://kozodoi.me/images/copied_from_nb/images/fig_partitioning.png)
 
 
-## Project summary
+## Summary
 
 Forecasting demand is an important managerial task that helps to optimize inventory planning. The optimized stocks can reduce retailer's costs and increase customer satisfaction due to faster delivery time. This project uses historical purchase data to predict future demand for different products.
+
+To approach this task, we perform a thorough feature engineering and data aggregation, implement custom profit-driven loss functions and build an ensemble of LightGBM classification models. A detailed walkthrough of our solution covering the most important steps is provided in [this blog post](https://kozodoi.me/python/time%20series/demand%20forecasting/competitions/2020/07/27/demand-forecasting.html).
 
 
 ## Project structure
