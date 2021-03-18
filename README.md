@@ -1,6 +1,7 @@
 # Data Mining Cup 2020 Solution
 
 Solution to the [Data Mining Cup 2020](https://www.data-mining-cup.com) competition on profit-driven demand forectasting. 
+
 ![pipeline](https://kozodoi.me/images/copied_from_nb/images/fig_partitioning.png)
 
 
