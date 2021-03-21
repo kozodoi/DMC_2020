@@ -2,7 +2,7 @@
 
 Top-15 solution to the [Data Mining Cup 2020](https://www.data-mining-cup.com) competition on profit-driven demand forecasting. 
 
-![pipeline](https://kozodoi.me/images/copied_from_nb/images/fig_partitioning.png)
+![pipeline](https://i.postimg.cc/PfvKjkJt/fig-part.png)
 
 
 ## Summary
