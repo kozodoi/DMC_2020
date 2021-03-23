@@ -1,8 +1,8 @@
 # Data Mining Cup 2020 Solution
 
-Top-15 solution to the [Data Mining Cup 2020](https://www.data-mining-cup.com) competition on profit-driven demand forecasting. 
+Top-15 solution to the [Data Mining Cup 2020](https://www.data-mining-cup.com) competition on profit-driven demand forecasting.
 
-![pipeline](https://i.postimg.cc/PfvKjkJt/fig-part.png)
+![pipeline](https://kozodoi.me/images/copied_from_nb/images/fig_partitioning.png)
 
 
 ## Summary
@@ -22,23 +22,23 @@ The project has the following structure:
     - meta-parameter tuning
     - ensembling (blending and stacking)
     - helper functions
-- `data/`: input data. The folder is not uploaded to Github due to size constraints. The raw data can be downloaded [here](https://www.data-mining-cup.com/dmc-2020/).
-- `output/`: output files and plots exported from the notebooks.
+- `data/`: input data (not included due to size constraints, can be downloaded [here](https://www.data-mining-cup.com/dmc-2020/))
+- `output/`: output files and plots exported from the notebooks
 - `documentation/`: task documentation provided by the competition organizers
-- `oof_preds/`: out-of-fold predictions produced by the train models within cross-validation.
-- `submissions/`: test sample predictions produced by the trained models.
+- `oof_preds/`: out-of-fold predictions produced by the train models within cross-validation
+- `submissions/`: test sample predictions produced by the trained models
 
 
 ## Requirements
 
-You can create a new conda environment using:
+To reproduce the solution, you can create a conda environment using:
 
 ```
 conda create -n dmc python=3.7
 conda activate dmc
 ```
 
-and then install the requirements:
+and then install the requirements specified in `requirements.txt`:
 
 ```
 conda install -n dmc --yes --file requirements.txt
