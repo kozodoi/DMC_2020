@@ -9,19 +9,18 @@ Top-15 solution to the [Data Mining Cup 2020](https://www.data-mining-cup.com) c
 
 Forecasting demand is an important managerial task that helps to optimize inventory planning. Optimized stocks can reduce retailer's costs and increase the customer satisfaction due to faster delivery times. This project uses historical purchase data to predict future demand for different products.
 
-To approach this task, we perform a thorough feature engineering and data aggregation, implement custom profit-driven loss functions and build an ensemble of LightGBM classification models. A detailed walkthrough of our solution covering the most important steps is provided in [this blog post](https://kozodoi.me/python/time%20series/demand%20forecasting/competitions/2020/07/27/demand-forecasting.html).
+To approach this task, we perform a thorough feature engineering and data aggregation, implement custom profit-driven loss functions and build an ensemble of LightGBM classification models. A detailed walkthrough of the project covering the most important steps is provided in [this blog post](https://kozodoi.me/python/time%20series/demand%20forecasting/competitions/2020/07/27/demand-forecasting.html).
 
 
 ## Project structure
 
 The project has the following structure:
-- `codes/`: Jupyter notebooks covering different project stages:
+- `codes/`: Jupyter notebooks and Python functions covering key project stages:
     - data preparation
     - feature engineering
     - predictive modeling
     - meta-parameter tuning
     - ensembling (blending and stacking)
-    - helper functions
 - `data/`: input data (not included due to size constraints, can be downloaded [here](https://www.data-mining-cup.com/dmc-2020/))
 - `output/`: output files and plots exported from the notebooks
 - `documentation/`: task documentation provided by the competition organizers
@@ -29,9 +28,9 @@ The project has the following structure:
 - `submissions/`: test sample predictions produced by the trained models
 
 
-## Requirements
+## Working with the repo
 
-To reproduce the solution, you can create a Conda environment using:
+To work with the repo, I recommend to create a virtual Conda environment:
 
 ```
 conda create -n dmc python=3.7
@@ -46,3 +45,5 @@ pip install lightgbm
 pip install imblearn
 pip install catboost
 ```
+
+More details are provided in the documentation within the scripts & notebooks. A detailed walkthrough is available in [this blog post](https://kozodoi.me/python/time%20series/demand%20forecasting/competitions/2020/07/27/demand-forecasting.html).
