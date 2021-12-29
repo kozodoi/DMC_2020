@@ -1,4 +1,4 @@
-# Data Mining Cup 2020 Solution
+# Profit-Driven Demand Forecatsing
 
 Top-15 solution to the [Data Mining Cup 2020](https://www.data-mining-cup.com) competition on profit-driven demand forecasting.
 
