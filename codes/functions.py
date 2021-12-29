@@ -16,6 +16,10 @@ def asymmetric_mse(y_true, y_pred):
     - hessian matrix
     '''
     
+    # checks
+    assert len(y_true) == len(y_pred), 'Predictions and actuals are not the same length'
+    
+    # calculations
     residual = (y_true - y_pred).astype('float')    
     grad     = np.where(residual > 0, -2*residual, -0.72*residual)
     hess     = np.where(residual > 0,  2.0, 0.72)
@@ -40,6 +44,10 @@ def asymmetric_mse_eval(y_true, y_pred):
     - whether the metric is maximized
     '''
     
+    # checks
+    assert len(y_true) == len(y_pred), 'Predictions and actuals are not the same length'
+    
+    # calculations
     residual = (y_true - y_pred).astype('float')      
     loss     = np.where(residual > 0, 2*residual**2, 0.72*residual**2)
     
@@ -67,7 +75,11 @@ def profit(y_true, y_pred, price):
            price  = np.array([1, 1, 1]))
 
     '''
-
+    
+    # checks
+    assert len(y_true) == len(y_pred), 'Predictions and actuals are not the same length'
+    assert len(price) == len(y_pred),  'Predictions and prices are not the same length'
+    
     # remove negative and round
     y_pred = np.where(y_pred > 0, y_pred, 0)
     y_pred = np.round(y_pred).astype('int')
