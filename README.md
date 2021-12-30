@@ -15,15 +15,16 @@ To approach this task, we perform a thorough feature engineering and data aggreg
 ## Project structure
 
 The project has the following structure:
-- `codes/`: Jupyter notebooks and Python functions covering key project stages:
+- `codes/`: Python codes with functions used in Jupyter notebooks
+- `notebooks/`: Jupyter notebooks covering key project stages:
     - data preparation
     - feature engineering
     - predictive modeling
     - meta-parameter tuning
     - ensembling (blending and stacking)
 - `data/`: input data (not included due to size constraints, can be downloaded [here](https://www.data-mining-cup.com/dmc-2020/))
-- `output/`: output files and plots exported from the notebooks
 - `documentation/`: task documentation provided by the competition organizers
+- `output/`: output files and plots exported from the notebooks
 - `oof_preds/`: out-of-fold predictions produced by the models within cross-validation
 - `submissions/`: test sample predictions produced by the trained models
 
