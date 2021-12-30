@@ -2,7 +2,13 @@ import pandas as pd
 import numpy as np
 
 
-##### TRAINING LOSS
+
+###############################
+#                             
+#        TRAINING LOSS
+#                             
+###############################
+
 def asymmetric_mse(y_true, y_pred):
     '''
     Asymmetric MSE objective for training LightGBM regressor.
@@ -28,7 +34,12 @@ def asymmetric_mse(y_true, y_pred):
 
 
 
-##### VALIDATION LOSS
+###############################
+#                             
+#        VALIDATION LOSS
+#                             
+###############################
+
 def asymmetric_mse_eval(y_true, y_pred):
     
     '''
@@ -55,7 +66,12 @@ def asymmetric_mse_eval(y_true, y_pred):
 
 
 
-##### PROFIT FUNCTION
+###############################
+#                             
+#        PROFIT FUNCTION
+#                             
+###############################
+
 def profit(y_true, y_pred, price):
     '''
     Computes profit according to DMC 2020 task.
@@ -99,30 +115,3 @@ def profit(y_true, y_pred, price):
     
     # return values
     return profit
-
-
-
-##### POSTPROCESSING PREDICTIONS
-def postprocess_preds(y_pred):
-    '''
-    Processess demand predictions outputted by a model.
-    
-    Arguments:
-    - y_pred (numpy array or list): estimated target values.
-
-    Returns:
-    - corrected y_pred
-    
-    Examples:
-    
-    postprocess_preds(y_pred = np.array([-2.10, 1.15, 10.78]))
-    '''
-
-    # demand can not be negative
-    y_pred = np.where(y_pred > 0, y_pred, 0)
-    
-    # demand has to be integer
-    y_pred = np.round(y_pred).astype('int')
-
-    # return values
-    return y_pred
