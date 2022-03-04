@@ -7,7 +7,11 @@
 from os import path
 import pandas as pd
 
-def save_csv_version(file_path, df, min_version = 1, **args):
+def save_csv_version(file_path, 
+                     df, 
+                     min_version = 1, 
+                     **args):
+    
     '''
     Saves pandas DF as a csv file with an automatically assigned version number 
     to prevent overwriting the existing file. If no file with the same name 
@@ -30,7 +34,7 @@ def save_csv_version(file_path, df, min_version = 1, **args):
     --------------------
     Examples:
     
-    # import dependecies
+    # import dependencies
     import pandas as pd
     import numpy as np
 
@@ -41,12 +45,14 @@ def save_csv_version(file_path, df, min_version = 1, **args):
     df = pd.DataFrame(data)
 
     # first call saves df as 'data_v1.csv'
-    from dptools import save_csv_version
     save_csv_version('data.csv', df, index = False)
 
     # second call saves df as 'data_v2.csv' as data_v1.csv already exists
     save_csv_version('data.csv', df, index = False)
     '''
+    
+    # tests
+    assert isinstance(df, pd.DataFrame), 'df has to be a pandas dataframe'
 
     # initialize
     version = min_version - 1

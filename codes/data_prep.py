@@ -6,7 +6,9 @@
 
 import pandas as pd
 
-def print_factor_levels(df, top = 5):
+def print_factor_levels(df, 
+                        top = 5):
+    
     '''
     Prints levels of categorical features in the dataset.
     
@@ -22,7 +24,7 @@ def print_factor_levels(df, top = 5):
     --------------------
     Examples:
 
-    # import dependecies
+    # import dependencies
     import pandas as pd
     import numpy as np
 
@@ -34,9 +36,12 @@ def print_factor_levels(df, top = 5):
     df = pd.DataFrame(data)
 
     # print factor levels
-    from dptools import print_factors
     print_factors(df, top = 3)
     '''
+    
+    # tests
+    assert isinstance(df,  pd.DataFrame), 'df has to be a pandas dataframe'
+    assert isinstance(top, int),          'top has to be a positive integer'
 
     # find factors
     facs = [f for f in df.columns if df[f].dtype == 'object']
@@ -54,8 +59,8 @@ def print_factor_levels(df, top = 5):
             print('')
     else:
         print('Found no categorical features.')
-        
-        
+
+
 
 ###############################
 #                             
@@ -65,7 +70,9 @@ def print_factor_levels(df, top = 5):
 
 import pandas as pd
 
-def find_constant_features(df, dropna = False):
+def find_constant_features(df, 
+                           dropna = False):
+    
     '''
     Finds features that have just a single unique value.
 
@@ -81,7 +88,7 @@ def find_constant_features(df, dropna = False):
     --------------------
     Examples:
 
-    # import dependecies
+    # import dependencies
     import pandas as pd
     import numpy as np
 
@@ -92,9 +99,11 @@ def find_constant_features(df, dropna = False):
     df = pd.DataFrame(data)
 
     # check constant features
-    from dptools import find_constant_features
     find_constant_features(df)
     '''
+    
+    # tests
+    assert isinstance(df, pd.DataFrame), 'df has to be a pandas dataframe'
     
     # find constant features
     constant = df.nunique(dropna = dropna) == 1
@@ -118,6 +127,7 @@ def find_constant_features(df, dropna = False):
 import pandas as pd
 
 def print_missings(df):
+    
     '''
     Counts missing values in a dataframe and prints the results.
 
@@ -132,7 +142,7 @@ def print_missings(df):
     --------------------
     Examples:
 
-    # import dependecies
+    # import dependencies
     import pandas as pd
     import numpy as np
 
@@ -144,9 +154,11 @@ def print_missings(df):
     df = pd.DataFrame(data)
 
     # count missings
-    from dptools import print_missings
     print_missings(df)
     '''
+
+    # tests
+    assert isinstance(df, pd.DataFrame), 'df has to be a pandas dataframe'
 
     # count missing values
     total = df.isnull().sum().sort_values(ascending = False)
@@ -175,6 +187,7 @@ def split_nested_features(df,
                           split_vars, 
                           sep,
                           drop = True):
+    
     '''
     Splits a nested string column into multiple features using a specified 
     separator and appends the creates features to the data frame.
@@ -193,7 +206,7 @@ def split_nested_features(df,
     --------------------
     Examples:
 
-    # import dependecies
+    # import dependencies
     import pandas as pd
     import numpy as np
 
@@ -204,9 +217,11 @@ def split_nested_features(df,
     df = pd.DataFrame(data)
 
     # split nested features
-    from dptools import split_nested_features
     df_new = split_nested_features(df, split_vars = 'income', sep = ',')
     '''
+    
+    # tests
+    assert isinstance(df, pd.DataFrame), 'df has to be a pandas dataframe'
 
     # copy df
     df_new = df.copy()
