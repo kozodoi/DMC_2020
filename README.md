@@ -4,6 +4,10 @@ Top-15 solution to the [Data Mining Cup 2020](https://www.data-mining-cup.com) c
 
 ![pipeline](https://kozodoi.me/images/copied_from_nb/images/fig_partitioning.png)
 
+- [Summary](#summary)
+- [Repo structure](#repo-structure)
+- [Working with the repo](#working-with-the-repo)
+
 
 ## Summary
 
@@ -12,7 +16,7 @@ Forecasting demand is an important managerial task that helps to optimize invent
 To approach this task, we perform a thorough feature engineering and data aggregation, implement custom profit-driven loss functions and build an ensemble of LightGBM classification models. A detailed walkthrough of the project covering the most important steps is provided in [this blog post](https://kozodoi.me/python/time%20series/demand%20forecasting/competitions/2020/07/27/demand-forecasting.html).
 
 
-## Project structure
+## Repo structure
 
 The project has the following structure:
 - `codes/`: Python codes with functions used in Jupyter notebooks
